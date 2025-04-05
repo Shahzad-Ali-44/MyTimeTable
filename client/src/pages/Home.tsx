@@ -38,7 +38,7 @@ export default function Home() {
       
         <div className="w-full md:w-lg flex justify-center">
           <img
-            src="https://ouch-prod-src-cdn.icons8.com/lt/illustration_preview_assets/rh6cIiKmtGQeXAk5.png"
+            src="/home.png"
             alt="MyTimetable App"
             className="w-full h-auto object-contain md:object-cover rounded-lg"
           />
