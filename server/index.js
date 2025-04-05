@@ -8,7 +8,10 @@ import taskRoutes from "./routes/taskRoute.js"
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://mytimetable-app.vercel.app/',
+    methods: ['GET', 'POST', 'PUT','DELETE'],
+  }));
 dotenv.config();
 
 
