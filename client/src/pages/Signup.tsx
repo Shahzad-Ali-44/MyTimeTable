@@ -27,12 +27,13 @@ export function SignupForm({
     const [password, setPassword] = useState<string>("");
     const navigate = useNavigate();
     const apiUrl = import.meta.env.VITE_MyTimeTable_BACKEND_URL;
+    const [loading, setLoading] = useState(false); 
 
 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
+        setLoading(true);
         axios
             .post(`${apiUrl}/api/users/signup`, { email, password })
             .then((response) => {
@@ -44,7 +45,9 @@ export function SignupForm({
                 toast.error(errorMessage, {
                     position: "top-right",
                 });
-            });
+            }).finally(() => {
+                setLoading(false);
+              });
     };
 
 
@@ -84,8 +87,8 @@ export function SignupForm({
                                     autoComplete="current-password"
                                 />
                             </div>
-                            <Button type="submit" className="w-full">
-                                Signup
+                            <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? "Registering..." : "Signup" }
                             </Button>
 
                         </div>

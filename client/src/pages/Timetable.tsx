@@ -24,7 +24,10 @@ export default function Timetable() {
   const { register, handleSubmit, reset, setFocus } = useForm();
   const formRef = useRef<HTMLDivElement>(null);
   const apiUrl = import.meta.env.VITE_MyTimeTable_BACKEND_URL;
-  
+  const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [loadingTask, setLoadingTask] = useState(false);
+
 
 
 
@@ -46,6 +49,7 @@ export default function Timetable() {
   }, [navigate, toastShown]);
 
   const fetchTasks = () => {
+    setLoadingTask(true);
     axios.get(`${apiUrl}/api/timetable`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -56,10 +60,13 @@ export default function Timetable() {
       })
       .catch((err) => {
         console.log(err);
+      }).finally(() => {
+        setLoadingTask(false);
       });
   };
 
   const onSubmit = (data: any) => {
+    setLoading(true);
     const [hours, minutes] = data.taskTime.split(":").map(Number);
     const period = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12;
@@ -89,6 +96,8 @@ export default function Timetable() {
         })
         .catch((err) => {
           toast.error(err.message || "Failed to update task.", { position: "top-right" });
+        }).finally(() => {
+          setLoading(false);
         });
     } else {
       // Add new task
@@ -104,11 +113,14 @@ export default function Timetable() {
         })
         .catch((err) => {
           toast.error(err.message || "Failed to add task.", { position: "top-right" });
+        }).finally(() => {
+          setLoading(false);
         });
     }
   };
 
   const handleDelete = (taskId: string) => {
+    setDeleting(taskId);
     axios.delete(`${apiUrl}/api/timetable/${taskId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -123,11 +135,13 @@ export default function Timetable() {
             taskTime: "",
             taskDescription: "",
           });
-          setEditingTask(null); 
+          setEditingTask(null);
         }
       })
       .catch(() => {
         toast.error("Failed to delete task.", { position: "top-right" });
+      }).finally(() => {
+        setDeleting(null);
       });
   };
 
@@ -172,7 +186,10 @@ export default function Timetable() {
                 <p className="">{task.taskDescription}</p>
                 <div className=" space-x-4 mt-5">
                   <Button variant="outline" onClick={() => handleEdit(task)}>Edit</Button>
-                  <Button variant="destructive" onClick={() => handleDelete(task._id)}>Delete</Button>
+                  <Button variant="destructive"
+                    onClick={() => handleDelete(task._id)}
+                    disabled={deleting === task._id}
+                  >{deleting === task._id ? "Deleting..." : "Delete"}</Button>
                 </div>
               </CardContent>
 
@@ -180,12 +197,27 @@ export default function Timetable() {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-center">
-            <p className="text-xl font-semibold text-gray-500 dark:text-gray-400">
-              No tasks found! 📅
-            </p>
-            <p className="text-md text-gray-400 dark:text-gray-500">
-              Start by adding a new task to manage your schedule.
-            </p>
+            {loadingTask ? (
+              <>
+                <p className="text-xl font-semibold text-gray-500 dark:text-gray-400">
+                  Loading your tasks 📅
+                </p>
+                <p className="text-md text-gray-400 dark:text-gray-500">
+                  Please wait while tasks are loaded.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-xl font-semibold text-gray-500 dark:text-gray-400">
+                  No tasks found! 📅
+                </p>
+                <p className="text-md text-gray-400 dark:text-gray-500">
+                  Start by adding a new task to manage your schedule.
+                </p>
+              </>
+            )}
+
+
           </div>
 
         )}
@@ -211,7 +243,7 @@ export default function Timetable() {
                 <Label className="mb-2" htmlFor="taskDescription">Task Description</Label>
                 <Input id="taskDescription" placeholder="Enter Task Description" {...register("taskDescription", { required: true })} />
               </div>
-              <Button type="submit" className="w-full">{editingTask ? 'Update Task' : 'Add Task'}</Button>
+              <Button type="submit" className="w-full" disabled={loading}>{loading ? "Processing..." : editingTask ? "Update Task" : "Add Task"}</Button>
             </form>
           </CardContent>
         </Card>

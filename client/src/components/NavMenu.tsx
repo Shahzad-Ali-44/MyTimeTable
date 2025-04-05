@@ -106,7 +106,7 @@ export function NavMenu() {
           variant="outline"
           size="icon"
           onClick={toggleMenu}
-          className="lg:hidden ml-5"
+          className="lg:hidden ml-3"
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
