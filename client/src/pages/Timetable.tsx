@@ -200,7 +200,7 @@ export default function Timetable() {
             {loadingTask ? (
               <>
                 <p className="text-xl font-semibold text-gray-500 dark:text-gray-400">
-                  Loading your tasks 📅
+                  Loading your tasks... 📅
                 </p>
                 <p className="text-md text-gray-400 dark:text-gray-500">
                   Please wait while tasks are loaded.
