@@ -85,9 +85,9 @@ In both the frontend (`client`) and backend (`server`), create `.env` files and 
 #### For the backend:
 
 ```env
-MONGO_URI=your-mongo-db-uri
-JWT_SECRET=your-jwt-secret
-PORT=5000
+MONGOURL=your-mongo-db-uri
+SECRET_KEY=your-jwt-secret
+PORT=8000
 ```
 
 #### For the frontend:
