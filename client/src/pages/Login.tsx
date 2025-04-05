@@ -32,6 +32,7 @@ export function LoginForm({
       .then((response) => {
         localStorage.setItem("isAuthenticated", "true");
         const token = response.data.token; 
+        console.log("Token received from backend:", token);
         localStorage.setItem("token", token); 
         toast.success(response.data.msg, { position: "top-right" })
         navigate("/timetable")
