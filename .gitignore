@@ -1,0 +1,56 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build directories
+/dist
+/client/dist
+/server/dist
+
+# Vite specific
+.vite
+.vitepress
+.vite-dev-server
+
+# .env files
+.env
+.env.local
+.env.*.local
+/client/.env
+/server/.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# Miscellaneous
+*.tgz
+*.bak
+*.swp
+*.swo
+*.swn
+
+# Package lock files
+client/package-lock.json
+server/package-lock.json
+client/yarn.lock
+server/yarn.lock
+
+# NPM/ Yarn specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
