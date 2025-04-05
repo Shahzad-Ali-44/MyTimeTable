@@ -24,6 +24,7 @@ export function NavMenu() {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("token"); 
     toast.success("You have logged out successfully", { position: "top-right" });
+    setIsMenuOpen(false)
     navigate("/login");  
   };
   
@@ -160,6 +161,7 @@ export function NavMenu() {
                     <Link
                       to="/login"
                       className="text-gray-900 font-bold dark:text-white hover:text-black"
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       Login
                     </Link>
