@@ -13,15 +13,21 @@ function App() {
   useAuth();
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <NavMenu />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/timetable" element={<Timetable />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignupForm />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Footer />
+      <div className="flex flex-col min-h-screen">
+        <NavMenu />
+
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/timetable" element={<Timetable />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignupForm />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
     </ThemeProvider>
   );
 }
