@@ -10,7 +10,6 @@
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Environment Variables](#environment-variables)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -136,7 +135,7 @@ Contributions are welcome! Feel free to fork the repository, make improvements, 
 
 
 
-## 📜 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
 
