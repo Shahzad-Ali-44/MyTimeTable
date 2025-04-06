@@ -33,7 +33,6 @@ export function NavMenu() {
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        {/* Logo */}
         <h1 className="text-xl font-bold text-gray-900 dark:text-white flex-shrink-0">
           <Link to={"/"}>MyTimeTable</Link>
           
@@ -93,21 +92,21 @@ export function NavMenu() {
         </div>
         
 
-        {/* Dark/Light Mode Toggle (Always visible, positioned to the right) */}
+        
         <Button
           variant="outline"
           size="icon"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="ml-auto"
+          className="ml-auto h-10 w-10"
         >
           {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>
-         {/* Mobile Menu Toggle */}
+        
          <Button
           variant="outline"
           size="icon"
           onClick={toggleMenu}
-          className="lg:hidden ml-3"
+          className="lg:hidden ml-3 h-10 w-10"
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
