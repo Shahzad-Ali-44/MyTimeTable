@@ -174,7 +174,7 @@ export default function Timetable() {
 
 
   return (
-    <div className=" p-4 flex flex-col lg:flex-row gap-6">
+    <div className="mb-10 p-4 flex flex-col lg:flex-row gap-6">
 
       <div className="w-full space-y-4">
         {tasks.length > 0 ? (

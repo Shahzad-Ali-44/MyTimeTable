@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Home() {
   const isAuthenticated = localStorage.getItem("isAuthenticated");
   return (
-    <div className="text-gray-900 dark:text-white">
+    <div className="text-gray-900 dark:text-white mb-10">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0 md:space-x-12">
       
         <div className="w-full md:w-1/2 md:text-center md:text-left">
