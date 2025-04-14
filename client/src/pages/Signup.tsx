@@ -105,13 +105,13 @@ export function SignupForm({
     )
 }
 
-
 export default function Page() {
     return (
-        <div className="flex md:min-h-screen w-full items-center justify-center p-6 md:p-10">
-            <div className="w-full max-w-sm">
-                <SignupForm />
-            </div>
+      <div className="flex w-full justify-center p-6 md:p-10">
+        <div className="flex flex-col justify-center w-full max-w-sm mx-auto min-h-[calc(100vh-150px)]">
+        <SignupForm />
         </div>
+      </div>
     )
-}
+  }
+  
