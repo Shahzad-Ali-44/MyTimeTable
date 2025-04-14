@@ -15,7 +15,6 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex flex-col min-h-screen">
         <NavMenu />
-
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -25,11 +24,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-
         <Footer />
       </div>
     </ThemeProvider>
   );
 }
-
 export default App;
