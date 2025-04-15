@@ -1,6 +1,6 @@
 # MyTimeTable
 
-**MyTimeTable** is a web-based application that helps users manage and organize their daily schedule efficiently. It allows users to create, edit, and delete tasks and events while keeping track of their time. The app is built with the MERN stack (MongoDB, Express, React, Node.js) for the backend and frontend and is designed to be responsive and easy to use.
+**MyTimeTable** is a web-based application that helps users manage and organize their daily schedule efficiently. It allows users to create, edit, and delete tasks while keeping track of their time. The app is built with the MERN stack (MongoDB, Express, React, Node.js) for the backend and frontend and is designed to be responsive and easy to use.
 
 
 
@@ -93,7 +93,7 @@ PORT=8000
 #### For the frontend:
 
 ```env
-VITE_MyTimeTable_BACKEND_UR=http://localhost:5000
+VITE_MyTimeTable_BACKEND_UR=http://localhost:8000
 ```
 
 ### 4. Start the development server:

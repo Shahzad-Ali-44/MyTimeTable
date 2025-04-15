@@ -28,7 +28,7 @@ export default function Home() {
           <p className="text-base mt-3"></p>
             Features include the ability to:
             <ul className="list-disc pl-5 mt-2">
-              <li>Create and manage timetables.</li>
+              <li>Create and manage timetable.</li>
               <li>Edit, delete, and view your daily schedule with ease.</li>
               <li>Customize your timetable based on your preferences.</li>
             </ul>    
