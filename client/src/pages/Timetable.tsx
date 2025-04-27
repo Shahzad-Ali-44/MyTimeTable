@@ -95,7 +95,7 @@ export default function Timetable() {
     const timeoutId = setTimeout(() => {
       if (Notification.permission === "granted") {
         const notif = new Notification("Reminder", {
-          body: `${task.taskName}!`,
+          body: `Task: ${task.taskName}!`,
           icon: "/favicon.ico",
         });
         notif.onclick = () => {
