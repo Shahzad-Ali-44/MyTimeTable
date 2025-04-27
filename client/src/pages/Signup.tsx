@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import axios from "axios"
 import toast from 'react-hot-toast';
-
+import { Loader2 } from "lucide-react";
 
 
 export function SignupForm({
@@ -21,14 +21,11 @@ export function SignupForm({
     ...props
 }: React.ComponentPropsWithoutRef<"div">) {
 
-
-
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const navigate = useNavigate();
     const apiUrl = import.meta.env.VITE_MyTimeTable_BACKEND_URL;
-    const [loading, setLoading] = useState(false); 
-
+    const [loading, setLoading] = useState(false);
 
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -47,7 +44,7 @@ export function SignupForm({
                 });
             }).finally(() => {
                 setLoading(false);
-              });
+            });
     };
 
 
@@ -88,7 +85,11 @@ export function SignupForm({
                                 />
                             </div>
                             <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? "Registering..." : "Signup" }
+                                {loading ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <Loader2 className="animate-spin h-5 w-5" /> Creating Account...
+                                    </span>
+                                ) : "Signup"}
                             </Button>
 
                         </div>
@@ -107,11 +108,11 @@ export function SignupForm({
 
 export default function Page() {
     return (
-      <div className="flex w-full justify-center p-6 md:p-10">
-        <div className="flex flex-col justify-center w-full max-w-sm mx-auto min-h-[calc(100vh-150px)]">
-        <SignupForm />
+        <div className="flex w-full justify-center p-6 md:p-10">
+            <div className="flex flex-col justify-center w-full max-w-sm mx-auto min-h-[calc(100vh-150px)]">
+                <SignupForm />
+            </div>
         </div>
-      </div>
     )
-  }
-  
+}
+

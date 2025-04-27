@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useState } from "react"
 import toast from 'react-hot-toast';
-
+import { Loader2 } from "lucide-react";
 export function LoginForm({
   className,
   ...props
@@ -82,7 +82,11 @@ export function LoginForm({
                   />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login" }
+              {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="animate-spin h-5 w-5" />
+              </span>
+            ) : "Login" }
               </Button>
 
             </div>

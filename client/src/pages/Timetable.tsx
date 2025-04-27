@@ -7,32 +7,45 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-
+import { Loader2 } from "lucide-react";
 
 export default function Timetable() {
-  interface Task {
-    _id: string;
-    taskName: string;
-    taskTime: string;
-    taskDescription: string;
-  }
 
   const navigate = useNavigate();
   const [toastShown, setToastShown] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const { register, handleSubmit, reset, setFocus } = useForm();
+  const { register, handleSubmit, reset, setFocus } = useForm<FormData>();
   const formRef = useRef<HTMLDivElement>(null);
   const apiUrl = import.meta.env.VITE_MyTimeTable_BACKEND_URL;
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [loadingTask, setLoadingTask] = useState(false);
+  const notificationTimeouts = useRef<Map<string, number>>(new Map());
 
+  interface Task {
+    _id: string;
+    taskName: string;
+    taskTime: string;
+    taskDescription: string;
+    notifiedToday: boolean;
+  }
+
+  interface FormData {
+    taskName: string;
+    taskTime: string;
+    taskDescription: string;
+  }
 
 
 
 
   useEffect(() => {
+
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
     const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (!isAuthenticated && !toastShown) {
       toast.error("You need to log in first to access the timetable.", {
@@ -48,6 +61,8 @@ export default function Timetable() {
     }
   }, [navigate, toastShown]);
 
+
+  // Method made for fetching all task from db:
   const fetchTasks = () => {
     setLoadingTask(true);
     axios.get(`${apiUrl}/api/timetable`, {
@@ -65,14 +80,47 @@ export default function Timetable() {
       });
   };
 
-  const onSubmit = (data: any) => {
+  // Task notification function:
+  const handleTaskNotification = (task: Task) => {
+    if (task.notifiedToday) return;
+    const [time, mod] = task.taskTime.split(" ");
+    let [h, m] = time.split(":").map(Number);
+    if (mod === "PM" && h < 12) h += 12;
+    if (mod === "AM" && h === 12) h = 0;
+    const now = new Date();
+    const fireAt = new Date();
+    fireAt.setHours(h, m, 0, 0);
+    const delay = fireAt.getTime() - now.getTime();
+    if (delay <= 0) return;
+    const timeoutId = setTimeout(() => {
+      if (Notification.permission === "granted") {
+        const notif = new Notification("Reminder", {
+          body: `${task.taskName}!`,
+          icon: "/favicon.ico",
+        });
+        notif.onclick = () => {
+          window.open(window.location.origin + "/timetable", "_blank");
+        };
+        setTasks(prevTasks =>
+          prevTasks.map(t =>
+            t._id === task._id ? { ...t, notifiedToday: true } : t
+          )
+        );
+      }
+    }, delay);
+    notificationTimeouts.current.set(task._id, timeoutId as unknown as number);
+  };
+
+
+  // Task Add and Update Method:
+  const onSubmit = (data: FormData) => {
     setLoading(true);
     const [hours, minutes] = data.taskTime.split(":").map(Number);
     const period = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12;
     const formattedTime = `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
-
     const taskData = { ...data, taskTime: formattedTime };
+
     if (editingTask) {
       // Update task
       axios.put(`${apiUrl}/api/timetable/${editingTask._id}`, taskData, {
@@ -86,6 +134,7 @@ export default function Timetable() {
           );
           setTasks(updatedTasks);
           toast.success("Task updated successfully!", { position: "top-right" });
+          handleTaskNotification(response.data.task);
           setEditingTask(null);
           reset({
             taskName: "",
@@ -99,7 +148,8 @@ export default function Timetable() {
         }).finally(() => {
           setLoading(false);
         });
-    } else {
+    }
+    else {
       // Add new task
       axios.post(`${apiUrl}/api/timetable`, taskData, {
         headers: {
@@ -109,6 +159,7 @@ export default function Timetable() {
         .then((response) => {
           setTasks([...tasks, response.data.task]);
           toast.success("Task added successfully!", { position: "top-right" });
+          handleTaskNotification(response.data.task);
           reset();
         })
         .catch((err) => {
@@ -119,7 +170,13 @@ export default function Timetable() {
     }
   };
 
+  // Task delete method
   const handleDelete = (taskId: string) => {
+    const timeoutId = notificationTimeouts.current.get(taskId);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      notificationTimeouts.current.delete(taskId);
+    }
     setDeleting(taskId);
     axios.delete(`${apiUrl}/api/timetable/${taskId}`, {
       headers: {
@@ -189,7 +246,11 @@ export default function Timetable() {
                   <Button variant="destructive"
                     onClick={() => handleDelete(task._id)}
                     disabled={deleting === task._id}
-                  >{deleting === task._id ? "Deleting..." : "Delete"}</Button>
+                  >{deleting === task._id ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="animate-spin h-5 w-5" /> Deleting...
+                    </span>
+                  ) : "Delete"}</Button>
                 </div>
               </CardContent>
 
@@ -200,7 +261,9 @@ export default function Timetable() {
             {loadingTask ? (
               <>
                 <p className="text-xl font-semibold text-gray-500 dark:text-gray-400">
-                  Loading your tasks... 📅
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="animate-spin h-5 w-5" /> Loading your tasks... 📅
+                  </span>
                 </p>
                 <p className="text-md text-gray-400 dark:text-gray-500">
                   Please wait while tasks are loaded.
@@ -243,7 +306,11 @@ export default function Timetable() {
                 <Label className="mb-2" htmlFor="taskDescription">Task Description</Label>
                 <Input id="taskDescription" placeholder="Enter Task Description" {...register("taskDescription", { required: true })} />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>{loading ? "Processing..." : editingTask ? "Update Task" : "Add Task"}</Button>
+              <Button type="submit" className="w-full" disabled={loading}>{loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="animate-spin h-5 w-5" /> Processing...
+                </span>
+              ) : editingTask ? "Update Task" : "Add Task"}</Button>
             </form>
           </CardContent>
         </Card>
