@@ -8,9 +8,31 @@ import Footer from "./components/Footer";
 import useAuth from './hooks/useAuth';
 import { Route, Routes } from "react-router-dom";
 import NotFound from "./pages/NotFound";
-
+import { useEffect } from "react";
+import { onMessage } from "firebase/messaging";
+import { messaging } from "./firebase";
 function App() {
   useAuth();
+  const apiUrl = import.meta.env.VITE_MyTimeTable_FRONTEND_URL;
+  useEffect(() => {
+    const unsubscribe = onMessage(messaging, (payload) => {
+      if (Notification.permission === 'granted') {
+        const notification = new Notification(payload.data?.title || '', {
+          body: payload.data?.body,
+          icon: 'favicon.ico',
+        });
+        notification.onclick = (event) => {
+          event.preventDefault(); 
+          window.location.href = `${apiUrl}/timetable`; 
+          notification.close();
+        };
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex flex-col min-h-screen">

@@ -8,6 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { messaging } from '../firebase';
+import { getToken } from "firebase/messaging";
+
 
 export default function Timetable() {
 
@@ -21,7 +24,7 @@ export default function Timetable() {
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [loadingTask, setLoadingTask] = useState(false);
-  const notificationTimeouts = useRef<Map<string, number>>(new Map());
+
 
   interface Task {
     _id: string;
@@ -37,14 +40,40 @@ export default function Timetable() {
     taskDescription: string;
   }
 
+  // Request permission to send notifications:
+  const requestNotificationPermission = async () => {
+    try {
+      await Notification.requestPermission();
+      if (Notification.permission === "granted") {
+        const token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_FIREBASE_VAPID,
+        });
+        if (token) {
+          const userToken = localStorage.getItem("token");
+          if (userToken) {
+            axios.post(`${apiUrl}/api/users/notificatons/notification-token`, { token }, {
+              headers: {
+                Authorization: `Bearer ${userToken}`
+              }
+            })
+              .catch(error => {
+                console.error("Error saving token in backend:", error);
+              });
+          }
+        }
+      } else {
+        console.error("Notification permission denied.");
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
+    }
+  };
 
 
 
   useEffect(() => {
 
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
+    requestNotificationPermission();
 
     const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (!isAuthenticated && !toastShown) {
@@ -80,36 +109,7 @@ export default function Timetable() {
       });
   };
 
-  // Task notification function:
-  const handleTaskNotification = (task: Task) => {
-    if (task.notifiedToday) return;
-    const [time, mod] = task.taskTime.split(" ");
-    let [h, m] = time.split(":").map(Number);
-    if (mod === "PM" && h < 12) h += 12;
-    if (mod === "AM" && h === 12) h = 0;
-    const now = new Date();
-    const fireAt = new Date();
-    fireAt.setHours(h, m, 0, 0);
-    const delay = fireAt.getTime() - now.getTime();
-    if (delay <= 0) return;
-    const timeoutId = setTimeout(() => {
-      if (Notification.permission === "granted") {
-        const notif = new Notification("Reminder", {
-          body: `Task: ${task.taskName}!`,
-          icon: "/favicon.ico",
-        });
-        notif.onclick = () => {
-          window.open(window.location.origin + "/timetable", "_blank");
-        };
-        setTasks(prevTasks =>
-          prevTasks.map(t =>
-            t._id === task._id ? { ...t, notifiedToday: true } : t
-          )
-        );
-      }
-    }, delay);
-    notificationTimeouts.current.set(task._id, timeoutId as unknown as number);
-  };
+
 
 
   // Task Add and Update Method:
@@ -134,7 +134,6 @@ export default function Timetable() {
           );
           setTasks(updatedTasks);
           toast.success("Task updated successfully!", { position: "top-right" });
-          handleTaskNotification(response.data.task);
           setEditingTask(null);
           reset({
             taskName: "",
@@ -159,7 +158,6 @@ export default function Timetable() {
         .then((response) => {
           setTasks([...tasks, response.data.task]);
           toast.success("Task added successfully!", { position: "top-right" });
-          handleTaskNotification(response.data.task);
           reset();
         })
         .catch((err) => {
@@ -172,11 +170,6 @@ export default function Timetable() {
 
   // Task delete method
   const handleDelete = (taskId: string) => {
-    const timeoutId = notificationTimeouts.current.get(taskId);
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      notificationTimeouts.current.delete(taskId);
-    }
     setDeleting(taskId);
     axios.delete(`${apiUrl}/api/timetable/${taskId}`, {
       headers: {
@@ -205,14 +198,12 @@ export default function Timetable() {
   const convertTo24Hour = (time12h: string) => {
     const [time, modifier] = time12h.split(" ");
     let [hours, minutes] = time.split(":").map(Number);
-
     if (modifier === "PM" && hours < 12) {
       hours += 12;
     }
     if (modifier === "AM" && hours === 12) {
       hours = 0;
     }
-
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
   };
 
@@ -232,7 +223,6 @@ export default function Timetable() {
 
   return (
     <div className="mb-10 p-4 flex flex-col lg:flex-row gap-6">
-
       <div className="w-full space-y-4">
         {tasks.length > 0 ? (
           tasks.map((task) => (
@@ -246,11 +236,8 @@ export default function Timetable() {
                   <Button variant="destructive"
                     onClick={() => handleDelete(task._id)}
                     disabled={deleting === task._id}
-                  >{deleting === task._id ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="animate-spin h-5 w-5" /> Deleting...
-                    </span>
-                  ) : "Delete"}</Button>
+                  >{deleting === task._id ? 'Deleting...' : "Delete"}
+                  </Button>
                 </div>
               </CardContent>
 
@@ -279,10 +266,7 @@ export default function Timetable() {
                 </p>
               </>
             )}
-
-
           </div>
-
         )}
       </div>
 
@@ -317,5 +301,4 @@ export default function Timetable() {
       </div>
     </div>
   );
-
 }

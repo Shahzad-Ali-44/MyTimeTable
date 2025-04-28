@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema({
     password:{
         type: String,
         required: true
-    }
+    },
+    firebaseToken: { type: String, default: "" }, 
 })
 
 
