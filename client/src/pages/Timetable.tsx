@@ -283,7 +283,7 @@ export default function Timetable() {
                 <Input id="taskName" placeholder="Enter Task Name" {...register("taskName", { required: true })} />
               </div>
               <div>
-                <Label className="mb-2" htmlFor="taskTime">Task Time</Label>
+                <Label className="mb-2" htmlFor="taskTime">Task Time <span className="text-xs">(Set time to get notified)</span></Label>
                 <Input id="taskTime" type="time" {...register("taskTime", { required: true })} />
               </div>
               <div>
