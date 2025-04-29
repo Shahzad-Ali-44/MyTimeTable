@@ -21,8 +21,7 @@ function App() {
     const unsubscribe = onMessage(messaging, (payload) => {
       toast.success(
         <>
-          Reminder<br />
-          Task: {payload.data?.body}
+          Reminder<br />{payload.data?.body}
         </>
       );
      
