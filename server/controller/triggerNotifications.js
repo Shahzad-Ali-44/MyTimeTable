@@ -1,4 +1,3 @@
-// triggerNotifications.js
 import Task from "../model/taskModel.js";
 import User from "../model/userModel.js";
 import sendNotification from "../firebase.js";

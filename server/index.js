@@ -6,6 +6,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoute.js"
 import taskRoutes from "./routes/taskRoute.js"
 import notificationRoutes from "./routes/notificationRoute.js"
+import triggerNotifications from "./controller/triggerNotifications.js"
 const app = express();
 app.use(bodyParser.json());
 const corsOptions = {
@@ -33,6 +34,6 @@ mongoose.connect(URL).then(()=>{
 
 app.use('/api/users', userRoutes);
 app.use('/api/users/notificatons', notificationRoutes);
-app.use('/api/triggerNotifications', notificationRoutes);
+app.use('/api/triggerNotifications', triggerNotifications );
 app.use('/api/timetable', taskRoutes);
 
