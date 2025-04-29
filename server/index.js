@@ -33,4 +33,6 @@ mongoose.connect(URL).then(()=>{
 
 app.use('/api/users', userRoutes);
 app.use('/api/users/notificatons', notificationRoutes);
+app.use('/api/triggerNotifications.js', notificationRoutes);
 app.use('/api/timetable', taskRoutes);
+
