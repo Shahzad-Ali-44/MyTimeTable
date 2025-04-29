@@ -29,9 +29,13 @@ const sendNotification = (firebaseToken, title, body) => {
     };
   
     admin.messaging().send(message)
-      .catch((error) => {
-        console.err('Error sending message:', error);
-      });
+  .then((response) => {
+    console.log("Successfully sent message:", response);
+  })
+  .catch((error) => {
+    console.error("Error sending message:", error);
+  });
+
   };
   
   export default sendNotification;
