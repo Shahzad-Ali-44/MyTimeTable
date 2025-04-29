@@ -11,7 +11,7 @@ import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 import { onMessage } from "firebase/messaging";
 import { messaging } from "./firebase";
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 function App() {
   useAuth();
   const apiUrl = import.meta.env.VITE_MyTimeTable_FRONTEND_URL;
@@ -19,9 +19,12 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onMessage(messaging, (payload) => {
-      toast.success(`${payload.data?.title || 'Notification'}: ${payload.data?.body || ''}`, {
-        position: 'top-right',
-      });
+      toast.success(
+        <>
+          Reminder<br />
+          Task: {payload.data?.title}
+        </>
+      );
      
       if (Notification.permission === 'granted' && 'Notification' in window) {
         const notification = new Notification(payload.data?.title || '', {
