@@ -33,8 +33,7 @@ export const triggerNotifications = async (req, res) => {
       }
     }
     res.json({
-      message: `Notifications API.`
-    });
+      message: 'Notifications API.'});
   } catch (err) {
     console.error("Error in triggerNotifications:", err);
     res
