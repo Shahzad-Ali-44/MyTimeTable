@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     firebaseToken: { type: String, default: "" }, 
+    timezone: { type: String },
 })
 
 

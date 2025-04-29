@@ -28,8 +28,9 @@ export function LoginForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     axios
-      .post(`${apiUrl}/api/users/login`, { email, password })
+      .post(`${apiUrl}/api/users/login`, { email, password, timezone  })
       .then((response) => {
         localStorage.setItem("isAuthenticated", "true");
         const token = response.data.token; 
