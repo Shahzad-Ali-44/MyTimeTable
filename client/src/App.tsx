@@ -11,27 +11,37 @@ import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 import { onMessage } from "firebase/messaging";
 import { messaging } from "./firebase";
+import toast from 'react-hot-toast';
 function App() {
   useAuth();
   const apiUrl = import.meta.env.VITE_MyTimeTable_FRONTEND_URL;
+  
+
   useEffect(() => {
     const unsubscribe = onMessage(messaging, (payload) => {
-      if (Notification.permission === 'granted') {
+      toast.success(`${payload.data?.title || 'Notification'}: ${payload.data?.body || ''}`, {
+        position: 'top-right',
+      });
+     
+      if (Notification.permission === 'granted' && 'Notification' in window) {
         const notification = new Notification(payload.data?.title || '', {
           body: payload.data?.body,
           icon: 'favicon.ico',
         });
+  
         notification.onclick = (event) => {
-          event.preventDefault(); 
-          window.location.href = `${apiUrl}/timetable`; 
+          event.preventDefault();
+          window.location.href = `${apiUrl}/timetable`;
           notification.close();
         };
       }
     });
+  
     return () => {
       unsubscribe();
     };
   }, []);
+  
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">

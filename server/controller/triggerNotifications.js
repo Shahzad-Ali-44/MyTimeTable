@@ -6,9 +6,6 @@ import moment from "moment-timezone";
 export const triggerNotifications = async (req, res) => {
   try {
     const allTasks = await Task.find({ notified: false });
-
-    let notificationsSent = 0;
-
     for (const task of allTasks) {
       const user = await User.findById(task.userId);
       if (!user) continue;
@@ -17,7 +14,6 @@ export const triggerNotifications = async (req, res) => {
       const nowInUserTimezone = moment().tz(userTimezone);
       const hours = nowInUserTimezone.hours();
       const minutes = nowInUserTimezone.minutes();
-
       const [time, mod] = task.taskTime.split(" ");
       let [h, m] = time.split(":").map(Number);
 
@@ -33,14 +29,11 @@ export const triggerNotifications = async (req, res) => {
           );
           task.notified = true;
           await task.save();
-          notificationsSent++;
         }
       }
     }
-
     res.json({
-      message: `Notifications processed.`,
-      totalNotificationsSent: notificationsSent,
+      message: `Notifications API.`,
     });
   } catch (err) {
     console.error("Error in triggerNotifications:", err);
