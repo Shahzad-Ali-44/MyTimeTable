@@ -6,7 +6,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoute.js"
 import taskRoutes from "./routes/taskRoute.js"
 import notificationRoutes from "./routes/notificationRoute.js"
-import triggerNotifications from "./controller/triggerNotifications.js"
+import { triggerNotifications } from "./controller/triggerNotifications.js"
 const app = express();
 app.use(bodyParser.json());
 const corsOptions = {
