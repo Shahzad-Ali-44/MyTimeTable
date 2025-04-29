@@ -22,7 +22,7 @@ function App() {
       toast.success(
         <>
           Reminder<br />
-          Task: {payload.data?.title}
+          Task: {payload.data?.body}
         </>
       );
      
