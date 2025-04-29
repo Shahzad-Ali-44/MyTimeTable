@@ -29,7 +29,7 @@ export const triggerNotifications = async (req, res) => {
         task.notified = true;
         await task.save();
       }else{
-        res.json({ message: "Notifications not sent." });
+        res.json({ message: "Notifications not sent.", Current_time: `${hours} , ${minutes} `,Task_time: `${h} , ${m} `,  });
       }
     }
 
