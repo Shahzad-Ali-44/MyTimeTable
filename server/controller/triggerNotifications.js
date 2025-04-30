@@ -18,8 +18,10 @@ export const triggerNotifications = async (req, res) => {
       if (mod === "AM" && h === 12) h = 0;
       if (h === hours && m === minutes) {
         if (user.firebaseTokens && user.firebaseTokens.length > 0) {
-          for (const token of user.firebaseTokens) {
-            await sendNotification(token, "Reminder", `Task: ${task.taskName}`);
+          for (const item of user.firebaseTokens) {
+            if (item?.token) {
+              await sendNotification(item.token, "Reminder", `Task: ${task.taskName}`);
+            }
           }
           task.notified = true;
           await task.save();
