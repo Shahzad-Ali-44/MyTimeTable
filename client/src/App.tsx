@@ -16,21 +16,32 @@ function App() {
   useAuth();
   const apiUrl = import.meta.env.VITE_MyTimeTable_FRONTEND_URL;
   
+  // Helper to get current theme for toasts:-
+  const getToastTheme = () => {
+    const theme = localStorage.getItem("vite-ui-theme") || "system"
+    if (theme === "dark") return "dark"
+    if (theme === "light") return "light"
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  }
 
   useEffect(() => {
     const unsubscribe = onMessage(messaging, (payload) => {
       toast.success(
         <>
           Reminder<br />{payload.data?.body}
-        </>
+        </>,
+        {
+          autoClose: 5000,
+          theme: getToastTheme()
+        }
       );
-     
+
       if (Notification.permission === 'granted' && 'Notification' in window) {
         const notification = new Notification(payload.data?.title || '', {
           body: payload.data?.body,
           icon: 'favicon.ico',
         });
-  
+
         notification.onclick = (event) => {
           event.preventDefault();
           window.location.href = `${apiUrl}/timetable`;
@@ -38,15 +49,15 @@ function App() {
         };
       }
     });
-  
+
     return () => {
       unsubscribe();
     };
   }, []);
-  
+
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="flex flex-col min-h-screen">
         <NavMenu />
         <main className="flex-grow">

@@ -14,8 +14,10 @@ export const notification = async (req, res) => {
         return res.status(404).json({ msg: "User not found" });
       }
       
-      user.firebaseToken = token;  
-      await user.save(); 
+      if (!user.firebaseTokens.includes(token)) {
+        user.firebaseTokens.push(token);
+        await user.save();
+      }
   
       res.status(200).json({ msg: "Token saved successfully" });
     } catch (error) {

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useState } from "react"
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { Loader2 } from "lucide-react";
 export function LoginForm({
   className,
@@ -23,25 +23,34 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_MyTimeTable_BACKEND_URL;
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+
+  // Helper to get current theme for toasts:-
+  const getToastTheme = () => {
+    const theme = localStorage.getItem("vite-ui-theme") || "system"
+    if (theme === "dark") return "dark"
+    if (theme === "light") return "light"
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  }
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     axios
-      .post(`${apiUrl}/api/users/login`, { email, password, timezone  })
+      .post(`${apiUrl}/api/users/login`, { email, password, timezone })
       .then((response) => {
         localStorage.setItem("isAuthenticated", "true");
-        const token = response.data.token; 
-        localStorage.setItem("token", token); 
-        toast.success(response.data.msg, { position: "top-right" })
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+        toast.success(response.data.msg, { theme: getToastTheme() })
         navigate("/timetable")
       })
       .catch((err) => {
         const errorMessage = err.response?.data?.msg || err.message || "An error occurred";
         toast.error(errorMessage, {
-          position: "top-right",
+          theme: getToastTheme(),
         });
       }).finally(() => {
         setLoading(false);
@@ -75,19 +84,19 @@ export function LoginForm({
                   <Label htmlFor="password">Password</Label>
 
                 </div>
-                <Input  id="password" 
-                 type="password" 
-                 required 
-                 onChange={(e) => setPassword(e.target.value)}
-                 autoComplete="current-password"
-                  />
+                <Input id="password"
+                  type="password"
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <Loader2 className="animate-spin h-5 w-5" />
-              </span>
-            ) : "Login" }
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="animate-spin h-5 w-5" />
+                  </span>
+                ) : "Login"}
               </Button>
 
             </div>

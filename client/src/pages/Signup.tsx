@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import axios from "axios"
-import toast from 'react-hot-toast';
+import {toast} from 'react-toastify';
 import { Loader2 } from "lucide-react";
 
 
@@ -28,19 +28,27 @@ export function SignupForm({
     const [loading, setLoading] = useState(false);
 
 
+    // Helper to get current theme for toasts:-
+    const getToastTheme = () => {
+        const theme = localStorage.getItem("vite-ui-theme") || "system"
+        if (theme === "dark") return "dark"
+        if (theme === "light") return "light"
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         axios
             .post(`${apiUrl}/api/users/signup`, { email, password })
             .then((response) => {
-                toast.success(response.data.msg, { position: "top-right" })
+                toast.success(response.data.msg, { theme: getToastTheme() })
                 navigate("/login")
             })
             .catch((err) => {
                 const errorMessage = err.response?.data?.msg || err.message || "An error occurred";
                 toast.error(errorMessage, {
-                    position: "top-right",
+                    theme: getToastTheme(),
                 });
             }).finally(() => {
                 setLoading(false);

@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +9,7 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { messaging } from '../firebase';
 import { getToken } from "firebase/messaging";
-
-
+import { Slide, toast } from "react-toastify"
 export default function Timetable() {
 
   const navigate = useNavigate();
@@ -40,8 +38,31 @@ export default function Timetable() {
     taskDescription: string;
   }
 
+    // Helper to get current theme for toasts:-
+    const getToastTheme = () => {
+      const theme = localStorage.getItem("vite-ui-theme") || "system"
+      if (theme === "dark") return "dark"
+      if (theme === "light") return "light"
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    }
+
+    
+
   // Request permission to send notifications:
   const requestNotificationPermission = async () => {
+
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        toast.success("Notifications enabled 🎉", {
+          theme: getToastTheme(),
+        })
+      } else if (permission === "denied") {
+        toast.error("Notifications denied ❌", {
+          theme: getToastTheme(),
+        })
+      }
+    })
+
     try {
       await Notification.requestPermission();
       if (Notification.permission === "granted") {
@@ -73,12 +94,36 @@ export default function Timetable() {
 
   useEffect(() => {
 
-    requestNotificationPermission();
+    if (Notification.permission === "default") {
+      toast(
+        ({ closeToast }) => (
+          <div>
+            <p className="text-sm mb-2">Enable notifications for reminders 🔔</p>
+            <Button
+            size='sm'
+              onClick={() => {
+                requestNotificationPermission()
+                closeToast()
+              }}
+            >
+              Enable Now
+            </Button>
+          </div>
+        ),
+        {
+          autoClose: false,
+          closeOnClick: false,
+          closeButton: true,
+          theme: getToastTheme(),
+          transition: Slide,
+        }
+      )
+    }
 
     const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (!isAuthenticated && !toastShown) {
-      toast.error("You need to log in first to access the timetable.", {
-        position: "top-right",
+      toast.error("Please login to view your timetable.", {
+        theme: getToastTheme()
       });
       setToastShown(true);
       navigate("/login");
@@ -133,7 +178,7 @@ export default function Timetable() {
             task._id === editingTask._id ? response.data.task : task
           );
           setTasks(updatedTasks);
-          toast.success("Task updated successfully!", { position: "top-right" });
+          toast.success("Task updated successfully!", { theme: getToastTheme() });
           setEditingTask(null);
           reset({
             taskName: "",
@@ -143,7 +188,7 @@ export default function Timetable() {
 
         })
         .catch((err) => {
-          toast.error(err.message || "Failed to update task.", { position: "top-right" });
+          toast.error(err.message || "Failed to update task.", { theme: getToastTheme() });
         }).finally(() => {
           setLoading(false);
         });
@@ -157,11 +202,11 @@ export default function Timetable() {
       })
         .then((response) => {
           setTasks([...tasks, response.data.task]);
-          toast.success("Task added successfully!", { position: "top-right" });
+          toast.success("Task added successfully!", { theme: getToastTheme() });
           reset();
         })
         .catch((err) => {
-          toast.error(err.message || "Failed to add task.", { position: "top-right" });
+          toast.error(err.message || "Failed to add task.", { theme: getToastTheme() });
         }).finally(() => {
           setLoading(false);
         });
@@ -178,7 +223,7 @@ export default function Timetable() {
     })
       .then(() => {
         setTasks(tasks.filter(task => task._id !== taskId));
-        toast.success("Task deleted successfully!", { position: "top-right" });
+        toast.success("Task deleted successfully!", { theme: getToastTheme() });
         if (editingTask && editingTask._id === taskId) {
           reset({
             taskName: "",
@@ -189,7 +234,7 @@ export default function Timetable() {
         }
       })
       .catch(() => {
-        toast.error("Failed to delete task.", { position: "top-right" });
+        toast.error("Failed to delete task.", { theme: getToastTheme() });
       }).finally(() => {
         setDeleting(null);
       });

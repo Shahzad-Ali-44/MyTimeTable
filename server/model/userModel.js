@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    firebaseToken: { type: String, default: "" }, 
+    firebaseTokens: { type: [String], default: [] }, 
     timezone: { type: String },
 })
 

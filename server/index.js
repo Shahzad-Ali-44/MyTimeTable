@@ -11,7 +11,8 @@ import triggerNotificationsRoutes from "./routes/triggerNotifications.js"
 const app = express();
 app.use(bodyParser.json());
 const corsOptions = {
-  origin: 'https://mytimetable-app.vercel.app', 
+  // origin: 'https://mytimetable-app.vercel.app', 
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
