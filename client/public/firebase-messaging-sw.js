@@ -1,4 +1,3 @@
-
 importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging-compat.js');
 
@@ -17,7 +16,8 @@ messaging.onBackgroundMessage(function (payload) {
   const notificationTitle = payload.data.title; 
   const notificationOptions = {
     body: payload.data.body,
-    icon: '/favicon.ico'
+    icon: '/favicon.ico',
+    badge: '/favicon.ico', 
   };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
