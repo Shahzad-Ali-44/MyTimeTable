@@ -7,17 +7,17 @@ import userRoutes from "./routes/userRoute.js"
 import taskRoutes from "./routes/taskRoute.js"
 import notificationRoutes from "./routes/notificationRoute.js"
 import triggerNotificationsRoutes from "./routes/triggerNotifications.js"
+dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
+
 const corsOptions = {
-  // origin: 'https://mytimetable-app.vercel.app', 
-  origin: '*', 
+  origin: process.env.FRONTEND_URL, 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
-dotenv.config();
 
 
 const PORT = process.env.PORT || 7000;
