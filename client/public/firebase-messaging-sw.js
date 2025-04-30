@@ -13,17 +13,18 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function (payload) {
-  const notificationTitle = payload.data.title; 
+  const notificationTitle = payload.data.title;
   const notificationOptions = {
     body: payload.data.body,
     icon: '/favicon.ico',
-    badge: '/favicon.ico', 
+    badge: '/favicon.ico',
   };
-
-    self.registration.showNotification(notificationTitle, notificationOptions);
+  return(
+  self.registration.showNotification(notificationTitle, notificationOptions)
+  )
 });
 
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener('notificationclick', function (event) {
   event.notification.close();
   event.waitUntil(
     clients.openWindow('https://mytimetable-app.vercel.app/timetable')
