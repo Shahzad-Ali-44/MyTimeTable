@@ -70,6 +70,7 @@ export default function Timetable() {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID,
         });
         if (token) {
+          localStorage.setItem("fcmToken", token);
           const userToken = localStorage.getItem("token");
           const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID(); 
           localStorage.setItem("deviceId", deviceId);
@@ -97,8 +98,12 @@ export default function Timetable() {
 
   useEffect(() => {
 
-    if (Notification.permission === "default" || Notification.permission === "denied") {
-      toast(
+    const existingToken = localStorage.getItem("fcmToken");
+
+    if (
+      (Notification.permission === "default" || Notification.permission === "denied") &&
+      !existingToken
+    ) {      toast(
         ({ closeToast }) => (
           <div>
             <p className="text-sm mb-2">Enable notifications for reminders 🔔</p>
