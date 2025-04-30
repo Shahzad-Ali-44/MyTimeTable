@@ -38,15 +38,15 @@ export default function Timetable() {
     taskDescription: string;
   }
 
-    // Helper to get current theme for toasts:-
-    const getToastTheme = () => {
-      const theme = localStorage.getItem("vite-ui-theme") || "system"
-      if (theme === "dark") return "dark"
-      if (theme === "light") return "light"
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-    }
+  // Helper to get current theme for toasts:-
+  const getToastTheme = () => {
+    const theme = localStorage.getItem("vite-ui-theme") || "system"
+    if (theme === "dark") return "dark"
+    if (theme === "light") return "light"
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  }
 
-    
+
 
   // Request permission to send notifications:
   const requestNotificationPermission = async () => {
@@ -73,7 +73,7 @@ export default function Timetable() {
           }
         );
       }
-      
+
     })
 
     try {
@@ -83,11 +83,10 @@ export default function Timetable() {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID,
         });
         if (token) {
-          localStorage.setItem("fcmToken", token);
           const userToken = localStorage.getItem("token");
-          const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID(); 
+          const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
           localStorage.setItem("deviceId", deviceId);
-          
+
           if (userToken) {
             await axios.post(
               `${apiUrl}/api/users/notificatons/notification-token`,
@@ -111,34 +110,30 @@ export default function Timetable() {
 
   useEffect(() => {
 
-    const existingToken = localStorage.getItem("fcmToken");
-
-    if (
-      (Notification.permission === "default" || Notification.permission === "denied") &&
-      !existingToken
-    ) {      toast(
-        ({ closeToast }) => (
-          <div>
-            <p className="text-sm mb-2">Enable notifications for reminders 🔔</p>
-            <Button
-            size='sm'
-              onClick={() => {
-                requestNotificationPermission()
-                closeToast()
-              }}
-            >
-              Enable Now
-            </Button>
-          </div>
-        ),
-        {
-          autoClose: false,
-          closeOnClick: false,
-          closeButton: true,
-          theme: getToastTheme(),
-          transition: Slide,
-        }
-      )
+    if(Notification.permission === "default" || Notification.permission === "denied") {
+        toast(
+          ({ closeToast }) => (
+            <div>
+              <p className="text-sm mb-2">Enable notifications for reminders 🔔</p>
+              <Button
+                size='sm'
+                onClick={() => {
+                  requestNotificationPermission()
+                  closeToast()
+                }}
+              >
+                Enable Now
+              </Button>
+            </div>
+          ),
+          {
+            autoClose: false,
+            closeOnClick: false,
+            closeButton: true,
+            theme: getToastTheme(),
+            transition: Slide,
+          }
+        )
     }
 
     const isAuthenticated = localStorage.getItem("isAuthenticated");
