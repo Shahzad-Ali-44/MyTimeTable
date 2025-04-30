@@ -1,29 +1,23 @@
 import User from '../model/userModel.js';
 
 export const notification = async (req, res) => {
-    const { token } = req.body;
-    const userId = req.userId; 
-    
-    if (!token) {
-      return res.status(400).json({ msg: "Token is required" });
-    }
-  
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ msg: "User not found" });
-      }
-      
-      if (!user.firebaseTokens.includes(token)) {
-        user.firebaseTokens.push(token);
-        await user.save();
-      }
-  
-      res.status(200).json({ msg: "Token saved successfully" });
-    } catch (error) {
-      console.error("Error saving token:", error);
-      res.status(500).json({ error: "Error saving token" });
-    }
-  };
-  
+  const { token, deviceId } = req.body;
+  const userId = req.userId;
+
+  if (!token || !deviceId) {
+    return res.status(400).json({ msg: "Token and deviceId are required" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    user.firebaseTokens = user.firebaseTokens.filter(t => t.deviceId !== deviceId);
+    user.firebaseTokens.push({ token, deviceId });
+    await user.save();
+    return res.status(200).json({ msg: "Token saved & previous cleaned" });
+  } catch (err) {
+    console.error("Error saving token:", err);
+    return res.status(500).json({ msg: "Server error" });
+  }
+};
 

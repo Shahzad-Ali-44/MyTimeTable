@@ -71,15 +71,19 @@ export default function Timetable() {
         });
         if (token) {
           const userToken = localStorage.getItem("token");
+          const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID(); 
+          localStorage.setItem("deviceId", deviceId);
+          
           if (userToken) {
-            axios.post(`${apiUrl}/api/users/notificatons/notification-token`, { token }, {
-              headers: {
-                Authorization: `Bearer ${userToken}`
+            await axios.post(
+              `${apiUrl}/api/users/notificatons/notification-token`,
+              { token, deviceId },
+              {
+                headers: {
+                  Authorization: `Bearer ${userToken}`,
+                },
               }
-            })
-              .catch(error => {
-                console.error("Error saving token in backend:", error);
-              });
+            );
           }
         }
       } else {
@@ -89,7 +93,6 @@ export default function Timetable() {
       console.error("Error requesting notification permission:", error);
     }
   };
-
 
 
   useEffect(() => {
