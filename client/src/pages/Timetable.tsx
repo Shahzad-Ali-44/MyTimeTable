@@ -56,11 +56,24 @@ export default function Timetable() {
         toast.success("Notifications enabled 🎉", {
           theme: getToastTheme(),
         })
-      } else if (permission === "denied") {
-        toast.error("Notifications denied ❌", {
-          theme: getToastTheme(),
-        })
+      } else if (Notification.permission === "denied") {
+        toast.info(
+          <div>
+            <p className="text-sm mb-1">Notifications are blocked ❌</p>
+            <p className="text-xs">Please allow them in your browser settings:</p>
+            <ul className="text-xs list-disc pl-4 mt-1">
+              <li>Click the 🔒 icon in the address bar</li>
+              <li>Go to “Site settings”</li>
+              <li>Set Notifications → <strong>Allow</strong></li>
+            </ul>
+          </div>,
+          {
+            autoClose: false,
+            theme: getToastTheme(),
+          }
+        );
       }
+      
     })
 
     try {
