@@ -56,7 +56,8 @@ export default function Timetable() {
         toast.success("Notifications enabled 🎉", {
           theme: getToastTheme(),
         })
-      } else if (Notification.permission === "denied") {
+      } else if (Notification.permission === "denied"){
+        localStorage.removeItem('fcm-token');
         toast.info(
           <div>
             <p className="text-sm mb-1">Notifications are blocked ❌</p>
@@ -83,6 +84,7 @@ export default function Timetable() {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID,
         });
         if (token) {
+          localStorage.setItem("fcm-token", token);
           const userToken = localStorage.getItem("token");
           const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
           localStorage.setItem("deviceId", deviceId);
@@ -110,7 +112,7 @@ export default function Timetable() {
 
   useEffect(() => {
 
-    if(Notification.permission === "default" || Notification.permission === "denied") {
+    if((Notification.permission === "default" || Notification.permission === "denied") || ((Notification.permission === "granted") && !localStorage.getItem('fcm-token'))) {
         toast(
           ({ closeToast }) => (
             <div>
@@ -134,10 +136,6 @@ export default function Timetable() {
             transition: Slide,
           }
         )
-    }
-
-    if(Notification.permission === "granted" ){
-      requestNotificationPermission();
     }
 
     const isAuthenticated = localStorage.getItem("isAuthenticated");
