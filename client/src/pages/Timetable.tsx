@@ -97,7 +97,7 @@ export default function Timetable() {
 
   useEffect(() => {
 
-    if (Notification.permission === "default") {
+    if (Notification.permission === "default" || Notification.permission === "denied") {
       toast(
         ({ closeToast }) => (
           <div>
