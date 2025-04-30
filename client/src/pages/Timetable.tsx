@@ -136,6 +136,10 @@ export default function Timetable() {
         )
     }
 
+    if(Notification.permission === "granted" ){
+      requestNotificationPermission();
+    }
+
     const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (!isAuthenticated && !toastShown) {
       toast.error("Please login to view your timetable.", {
