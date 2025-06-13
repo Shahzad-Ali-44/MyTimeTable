@@ -18,7 +18,7 @@ function App() {
   
   // Helper to get current theme for toasts:-
   const getToastTheme = () => {
-    const theme = localStorage.getItem("vite-ui-theme") || "system"
+    const theme = localStorage.getItem("vite-ui-theme") || "dark"
     if (theme === "dark") return "dark"
     if (theme === "light") return "light"
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
