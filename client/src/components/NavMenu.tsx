@@ -9,26 +9,31 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useState } from "react";
-import toast from 'react-hot-toast';
-
+import { toast } from 'react-toastify';
 export function NavMenu() {
+
+    const getToastTheme = () => {
+    const theme = localStorage.getItem("vite-ui-theme") || "dark"
+    if (theme === "dark") return "dark"
+    if (theme === "light") return "light"
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  }
+
+
   const { setTheme, theme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
   const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
 
   const handleLogout = () => {
-    
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("token"); 
-    toast.success("You have logged out successfully", { position: "top-right" });
+    toast.success("You have logged out successfully", { theme: getToastTheme() })
     setIsMenuOpen(false)
     navigate("/login");  
   };
   
-  const isAuthenticated = localStorage.getItem("isAuthenticated");
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md">
